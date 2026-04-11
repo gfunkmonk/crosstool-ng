@@ -98,19 +98,56 @@ config DEBUG_CT_SAVE_STEPS
       
       To get the full list os steps, run: ct-ng list-steps
 
-config DEBUG_CT_SAVE_STEPS_GZIP
+choice
+    prompt "Compression algorithm for saved states"
+    default DEBUG_CT_SAVE_STEPS_COMPRESS_AUTO
+    depends on DEBUG_CT_SAVE_STEPS
+
+config DEBUG_CT_SAVE_STEPS_COMPRESS_AUTO
     bool
-    prompt "gzip saved states"
-    default y
+    prompt "auto"
+    help
+      Automatically select the best available compressor.
+      Checks in order: zstd, gzip. Falls back to no compression
+      if neither is available (unlikely since gzip is required).
+
+config DEBUG_CT_SAVE_STEPS_COMPRESS_ZSTD
+    bool
+    prompt "zstd"
+    depends on CONFIGURE_has_zstd
+
+config DEBUG_CT_SAVE_STEPS_COMPRESS_GZIP
+    bool
+    prompt "gzip"
+
+config DEBUG_CT_SAVE_STEPS_COMPRESS_NONE
+    bool
+    prompt "none"
+
+endchoice
+
+config DEBUG_CT_SAVE_STEPS_COMPRESS_LEVEL
+    int
+    prompt "Compression level"
+    range 1 9  if DEBUG_CT_SAVE_STEPS_COMPRESS_GZIP
+    range 1 19 if DEBUG_CT_SAVE_STEPS_COMPRESS_ZSTD
+    range 1 19 if DEBUG_CT_SAVE_STEPS_COMPRESS_AUTO
+    default 3
     depends on DEBUG_CT_SAVE_STEPS
     help
-      If you are tight on space, then you can ask to gzip the saved states
-      tarballs. On the other hand, this takes some longer time...
-      
-      To lose as less time as possible, the gzip process is done with a low
-      compression ratio (-3), which gives roughly 70% gain in size. Going
-      further doesn't gain much, and takes far more time (believe me, I've
-      got figures here! :-) ).
+      Compression level for saved state snapshots.
+      gzip: 1-9 (1=fastest, 9=best compression, default 3)
+      zstd: 1-19 (1=fastest, 19=best compression, default 3)
+
+      If 'auto' selects gzip and level > 9, it will be clamped to 9 at runtime.
+
+config DEBUG_CT_SAVE_STEPS_COMPRESS
+    string
+    depends on DEBUG_CT_SAVE_STEPS
+    default "auto"  if DEBUG_CT_SAVE_STEPS_COMPRESS_AUTO
+    default "gzip"  if DEBUG_CT_SAVE_STEPS_COMPRESS_GZIP
+    default "zstd"  if DEBUG_CT_SAVE_STEPS_COMPRESS_ZSTD
+    default ""      if DEBUG_CT_SAVE_STEPS_COMPRESS_NONE
 
 config NO_OVERRIDE_LC_MESSAGES
     bool
