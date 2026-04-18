@@ -202,12 +202,7 @@ const char *get_line(const char *text, int line_no)
 
 int get_line_length(const char *line)
 {
-	int res = 0;
-	while (*line != '\0' && *line != '\n') {
-		line++;
-		res++;
-	}
-	return res;
+return strcspn(line, "\n");
 }
 
 /* print all lines to the window. */
