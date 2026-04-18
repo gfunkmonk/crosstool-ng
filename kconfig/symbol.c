@@ -877,6 +877,7 @@ const char *sym_escape_string_value(const char *in)
 	const char *p;
 	size_t reslen;
 	char *res;
+	char *out;
 	size_t l;
 
 	reslen = strlen(in) + strlen("\"\"") + 1;
@@ -896,22 +897,25 @@ const char *sym_escape_string_value(const char *in)
 	res = xmalloc(reslen);
 	res[0] = '\0';
 
-	strcat(res, "\"");
+	out = res;
+	*out++ = '"';
 
 	p = in;
 	for (;;) {
 		l = strcspn(p, "\"\\");
-		strncat(res, p, l);
+		memcpy(out, p, l);
+		out += l;
 		p += l;
 
 		if (p[0] == '\0')
 			break;
 
-		strcat(res, "\\");
-		strncat(res, p++, 1);
+		*out++ = '\\';
+		*out++ = *p++;
 	}
 
-	strcat(res, "\"");
+	*out++ = '"';
+	*out = '\0';
 	return res;
 }
 

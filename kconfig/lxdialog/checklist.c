@@ -18,10 +18,11 @@ static int list_width, check_x, item_x;
 static void print_item(WINDOW * win, int choice, int selected)
 {
 	int i;
+	int len = list_width > item_x ? list_width - item_x : 0;
 	char *list_item = malloc(list_width + 1);
 
-	strncpy(list_item, item_str(), list_width - item_x);
-	list_item[list_width - item_x] = '\0';
+	strncpy(list_item, item_str(), len);
+	list_item[len] = '\0';
 
 	/* Clear 'residue' of last item */
 	wattrset(win, dlg.menubox.atr);

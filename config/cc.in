@@ -17,6 +17,9 @@ config CC_SUPPORT_JAVA
 config CC_SUPPORT_ADA
     bool
 
+config CC_SUPPORT_COBOL
+    bool
+
 config CC_SUPPORT_D
     bool
 
@@ -90,6 +93,18 @@ config CC_LANG_D
       Only select this if you know that your specific version of the
       compiler supports this language. If the target is bare, the runtime
       won't be included.
+
+
+config CC_LANG_COBOL
+    bool
+    prompt "COBOL (EXPERIMENTAL)"
+    depends on CC_SUPPORT_COBOL
+    depends on EXPERIMENTAL
+    help
+      Enable building a COBOL compiler.
+
+      Only select this if you know that your specific version of the
+      compiler supports this language.
 
 if ! BARE_METAL
 

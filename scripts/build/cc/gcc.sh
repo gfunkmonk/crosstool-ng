@@ -43,6 +43,7 @@ cc_gcc_lang_list() {
     [ "${CT_CC_LANG_CXX}" = "y"      ] && lang_list+=",c++"
     [ "${CT_CC_LANG_FORTRAN}" = "y"  ] && lang_list+=",fortran"
     [ "${CT_CC_LANG_ADA}" = "y"      ] && lang_list+=",ada"
+    [ "${CT_CC_LANG_COBOL}" = "y"    ] && lang_list+=",cobol"
     [ "${CT_CC_LANG_D}" = "y"        ] && lang_list+=",d"
     [ "${CT_CC_LANG_JAVA}" = "y"     ] && lang_list+=",java"
     [ "${CT_CC_LANG_JIT}" = "y"      ] && lang_list+=",jit"
