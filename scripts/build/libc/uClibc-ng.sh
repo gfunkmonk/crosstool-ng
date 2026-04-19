@@ -9,13 +9,37 @@ if [ "${CT_ARCH}" = "alpha" ]; then
 fi
 
 # If building for PowerPC 64-bit, we disable the LDSO to avoid the GOT error
-    if [[ "${CT_ARCH}" == *"powerpc"* && "${CT_ARCH_64}" == "y" ]]; then
-        CT_DoLog EXTRA "Disabling LDSO for PowerPC64 to bypass GOT errors"
-        sed -i 's/.*HAS_SHARED_LIBS.*/# HAS_SHARED_LIBS is not set/' .config
-        sed -i 's/.*BUILD_UCLIBC_LDSO.*/# BUILD_UCLIBC_LDSO is not set/' .config
-        # Ensure ARCH_HAS_NO_LDSO is selected in the Kconfig
-        sed -i '/config ARCH_any_powerpc/a \	select ARCH_HAS_NO_LDSO' extra/Configs/Config.powerpc
-    fi
+if [[ "${CT_ARCH}" == *"powerpc"* && "${CT_ARCH_64}" == "y" ]]; then
+    CT_DoLog EXTRA "Disabling LDSO for PowerPC64 to bypass GOT errors"
+    sed -i 's/.*HAS_SHARED_LIBS.*/# HAS_SHARED_LIBS is not set/' .config
+    sed -i 's/.*BUILD_UCLIBC_LDSO.*/# BUILD_UCLIBC_LDSO is not set/' .config
+    # Ensure ARCH_HAS_NO_LDSO is selected in the Kconfig
+    sed -i '/config ARCH_any_powerpc/a \	select ARCH_HAS_NO_LDSO' extra/Configs/Config.powerpc
+fi
+
+if [ "${CT_ARCH}" = "alpha" ]; then
+    CT_DoLog EXTRA "Alpha Nuke: Commenting out preinit_array in source"
+    # Find the C file and comment out the lines that use those symbols
+    # This targets the specific variable declarations and the loop in __uClibc_main.c
+    find . -name "__uClibc_main.c" -exec sed -i '/extern.*__preinit_array_start/s/^/\/\//' {} +
+    find . -name "__uClibc_main.c" -exec sed -i '/extern.*__preinit_array_end/s/^/\/\//' {} +
+    find . -name "__uClibc_main.c" -exec sed -i '/for.*__preinit_array_start/,/}/s/^/\/\//' {} +
+    
+    # Also kill the definition in the headers to be sure
+    find . -name "dl-elf.h" -exec sed -i 's/UCLIBC_HAS_INITFINI_ARRAY/DISABLED_FOR_ALPHA/g' {} +
+fi
+
+if [ "${CT_ARCH}" = "sparc" ] && [ "${CT_ARCH_64}" = "y" ]; then
+    CT_DoLog EXTRA "Fixing SPARC64 pointer casts and fcntl64 aliases"
+    
+    # Fix the 'cast from pointer to integer of different size' in syscalls.h
+    # We change the (int) cast to (long) to match the 64-bit register size
+    find . -name "syscalls.h" -exec sed -i 's/(int) (o/(long) (o/g' {} +
+    
+    # Fix the fcntl64 alias error by ensuring fcntl64 isn't treated as a separate entity 
+    # when it should be identical to fcntl on 64-bit
+    find . -name "__syscall_fcntl.c" -exec sed -i 's/lt_libc_hidden(fcntl64)/#ifndef __arch64__\nlt_libc_hidden(fcntl64)\n#endif/' {} +
+fi
 
 # This function builds and install the full C library
 uClibc_ng_main()
