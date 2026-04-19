@@ -70,14 +70,20 @@ uClibc_ng_backend_once()
             find . -name "__uClibc_main.c" -exec sed -i 's/defined(\?UCLIBC_HAS_INITFINI_ARRAY)\?/0/g' {} +
     fi
 
-    # If building for PowerPC 64-bit, we disable the LDSO to avoid the GOT error
+    # If building for PowerPC 64-bit, we prevent LDSO selection at the Kconfig level
     if [[ "${CT_ARCH}" == *"powerpc"* && "${CT_ARCH_64}" == "y" ]]; then
-        CT_DoLog EXTRA "Disabling LDSO for PowerPC64 to bypass GOT errors"
-        sed -i 's/.*HAS_SHARED_LIBS.*/# HAS_SHARED_LIBS is not set/' .config
-        sed -i 's/.*BUILD_UCLIBC_LDSO.*/# BUILD_UCLIBC_LDSO is not set/' .config
-        # Ensure ARCH_HAS_NO_LDSO is selected in the Kconfig
-        sed -i '/config ARCH_any_powerpc/a \	select ARCH_HAS_NO_LDSO' extra/Configs/Config.powerpc
+        CT_DoLog EXTRA "Nuking LDSO support in Kconfig for PowerPC64"
+        # We target the source Kconfig instead of the generated .config
+        # This forces the 'select ARCH_HAS_NO_LDSO' which kills shared lib support
+        find . -name "Config.powerpc" -exec sed -i '/config ARCH_any_powerpc/a \	select ARCH_HAS_NO_LDSO' {} +
+        
+        # If .config exists, we nuke it there too just in case, but ignore errors
+        [ -f .config ] && sed -i 's/.*HAS_SHARED_LIBS.*/# HAS_SHARED_LIBS is not set/' .config || true
     fi
+
+    # The recursive find for @local is still your best friend
+    CT_DoLog EXTRA "Nuking @local from all PowerPC sources"
+    find . -type f \( -name "*.S" -o -name "*.h" -o -name "*.c" \) -exec sed -i 's/@local//g' {} +
 
     if [ "${CT_ARCH}" = "alpha" ]; then
         CT_DoLog EXTRA "Alpha Nuke: Commenting out preinit_array in source"
