@@ -63,6 +63,12 @@ uClibc_ng_backend_once()
     CT_DoExecLog ALL find ldso/ldso/powerpc/ \( -name "*.S" -o -name "*.h" \) -exec sed -i 's/@local//g' {} +
     CT_DoExecLog ALL sed -i 's/sizeof (__arg\([1-6]\)) > 4/sizeof (__arg\1) > sizeof(long)/g' libc/sysdeps/linux/powerpc/bits/syscalls.h
     CT_DoExecLog ALL sed -i '/config ARCH_any_powerpc/a \	select ARCH_HAS_NO_LDSO' extra/Configs/Config.powerpc
+    CT_DoLog EXTRA "Nuking @local from all PowerPC assembly and headers"
+    # Find every file containing @local in the current build tree and kill it
+    CT_DoExecLog ALL find . -type f \( -name "*.S" -o -name "*.h" -o -name "*.c" \) -exec sed -i 's/@local//g' {} +
+    
+    CT_DoLog EXTRA "Fixing 64-bit syscall argument sizing"
+    CT_DoExecLog ALL find . -name "syscalls.h" -exec sed -i 's/sizeof (__arg\([1-6]\)) > 4/sizeof (__arg\1) > sizeof(long)/g' {} +
 
     # Force the date of the pregen locale data, as the
     # newer ones that are referenced are not available
