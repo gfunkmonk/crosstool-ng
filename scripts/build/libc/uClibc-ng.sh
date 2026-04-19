@@ -2,6 +2,12 @@
 # Copyright 2007 Yann E. MORIN
 # Licensed under the GPL v2. See COPYING in the root of this package
 
+if [ "${CT_ARCH}" = "alpha" ]; then
+        CT_DoLog EXTRA "Forcing Alpha to use legacy _init/_fini"
+        find . -name "dl-elf.h" -exec sed -i 's/defined(\?UCLIBC_HAS_INITFINI_ARRAY)\?/0/g' {} +
+        find . -name "__uClibc_main.c" -exec sed -i 's/defined(\?UCLIBC_HAS_INITFINI_ARRAY)\?/0/g' {} +
+fi
+
 # This function builds and install the full C library
 uClibc_ng_main()
 {
