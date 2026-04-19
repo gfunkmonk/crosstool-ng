@@ -53,6 +53,10 @@ uClibc_ng_backend_once()
     # Simply copy files until uClibc has the ability to build out-of-tree
     CT_DoLog EXTRA "Copying sources to build dir"
     CT_DoExecLog ALL cp -av "${CT_SRC_DIR}/uClibc-ng/." .
+    CT_DoLog EXTRA "Stripping @local and fixing 64-bit syscalls"
+    CT_DoExecLog ALL find ldso/ldso/powerpc/ \( -name "*.S" -o -name "*.h" \) -exec sed -i 's/@local//g' {} +
+    CT_DoExecLog ALL sed -i 's/sizeof (__arg\([1-6]\)) > 4/sizeof (__arg\1) > sizeof(long)/g' libc/sysdeps/linux/powerpc/bits/syscalls.h
+    CT_DoExecLog ALL sed -i '/config ARCH_any_powerpc/a \	select ARCH_HAS_NO_LDSO' extra/Configs/Config.powerpc
 
     # Force the date of the pregen locale data, as the
     # newer ones that are referenced are not available
