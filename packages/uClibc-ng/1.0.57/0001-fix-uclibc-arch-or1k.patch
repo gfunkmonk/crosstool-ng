@@ -1,0 +1,12 @@
+--- a/scripts/build/arch/openrisc.sh
++++ b/scripts/build/arch/openrisc.sh
+@@ -4,3 +4,9 @@
+     CT_TARGET_ARCH="or1k"
+     :;
+ }
++
++CT_DoArchUClibcConfig() {
++    local cfg="${1}"
++
++    CT_DoArchUClibcSelectArch "${cfg}" "or1k"
++}

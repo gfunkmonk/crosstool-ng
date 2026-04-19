@@ -1,0 +1,9 @@
+--- a/scripts/build/arch/parisc.sh
++++ b/scripts/build/arch/parisc.sh
+@@ -10,5 +10,5 @@
+ {
+     local cfg="${1}"
+ 
+-    CT_DoArchUClibcSelectArch "${cfg}" "parisc"
++    CT_DoArchUClibcSelectArch "${cfg}" "hppa"
+ }

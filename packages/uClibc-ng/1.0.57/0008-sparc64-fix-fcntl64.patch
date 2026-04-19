@@ -1,0 +1,9 @@
+--- a/libc/sysdeps/linux/common/__syscall_fcntl.c
++++ b/libc/sysdeps/linux/common/__syscall_fcntl.c
+@@ -68,5 +68,5 @@
+ #if !defined __NR_fcntl64 && __WORDSIZE == 32
+-strong_alias_untyped(fcntl,fcntl64)
++strong_alias(fcntl,fcntl64)
+ lt_strong_alias(fcntl64)
+ lt_libc_hidden(fcntl64)
+ #endif
