@@ -8,6 +8,15 @@ if [ "${CT_ARCH}" = "alpha" ]; then
         find . -name "__uClibc_main.c" -exec sed -i 's/defined(\?UCLIBC_HAS_INITFINI_ARRAY)\?/0/g' {} +
 fi
 
+# If building for PowerPC 64-bit, we disable the LDSO to avoid the GOT error
+    if [[ "${CT_ARCH}" == *"powerpc"* && "${CT_ARCH_64}" == "y" ]]; then
+        CT_DoLog EXTRA "Disabling LDSO for PowerPC64 to bypass GOT errors"
+        sed -i 's/.*HAS_SHARED_LIBS.*/# HAS_SHARED_LIBS is not set/' .config
+        sed -i 's/.*BUILD_UCLIBC_LDSO.*/# BUILD_UCLIBC_LDSO is not set/' .config
+        # Ensure ARCH_HAS_NO_LDSO is selected in the Kconfig
+        sed -i '/config ARCH_any_powerpc/a \	select ARCH_HAS_NO_LDSO' extra/Configs/Config.powerpc
+    fi
+
 # This function builds and install the full C library
 uClibc_ng_main()
 {
