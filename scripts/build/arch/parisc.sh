@@ -10,5 +10,5 @@ CT_DoArchUClibcConfig()
 {
     local cfg="${1}"
 
-    CT_DoArchUClibcSelectArch "${cfg}" "parisc"
+    CT_DoArchUClibcSelectArch "${cfg}" "hppa"
 }
