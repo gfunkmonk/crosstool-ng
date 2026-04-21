@@ -103,4 +103,14 @@ CT_DoArchMUSLPostInstall() {
     if [ ! -r "${CT_HEADERS_DIR}/sgidefs.h" ]; then
         echo "#include <asm/sgidefs.h> // Redirected by ct-ng" > "${CT_HEADERS_DIR}/sgidefs.h"
     fi
+
+    if [ "${CT_ARCH_64}" = "y" ]; then
+        # Workaround to fix libdir path
+        if [ ! -e "${CT_SYSROOT_DIR}/lib64" ]; then
+            ln -sf lib ${CT_SYSROOT_DIR}/lib64
+        fi
+        if [ ! -e "${CT_SYSROOT_DIR}/usr/lib64" ]; then
+            ln -sf lib ${CT_SYSROOT_DIR}/usr/lib64
+        fi
+    fi
 }
