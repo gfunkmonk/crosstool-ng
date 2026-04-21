@@ -1,0 +1,13 @@
+--- a/libc/sysdeps/linux/common/__syscall_fcntl.c 2026-03-01 00:49:30.000000000 -0500
++++ b/libc/sysdeps/linux/common/__syscall_fcntl.c 2026-04-21 06:19:32.146447502 -0400
+@@ -13,6 +13,10 @@
+ #include <fcntl.h>
+ #include <bits/wordsize.h>
+
++#if defined(__NR_fcntl64) && __WORDSIZE == 64
++# undef __NR_fcntl64
++#endif
++
+ int __NC(fcntl)(int fd, int cmd, long arg)
+ {
+ #if __WORDSIZE == 32
