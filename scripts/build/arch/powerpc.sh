@@ -19,6 +19,10 @@ CT_DoArchTupleValues () {
             ;;
     esac
 
+    if [ "${CT_ARCH_FLOAT}" = "soft" ]; then
+        CT_TARGET_SYS="${CT_TARGET_SYS}sf"
+    fi
+
     # Add extra flags for SPE if needed. SPE is obsolete in GCC8.
     if [ "${CT_ARCH_powerpc_ABI_SPE}" = "y" ]; then
         CT_ARCH_TARGET_CFLAGS="-mabi=spe -mspe"

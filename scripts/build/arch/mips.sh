@@ -10,6 +10,11 @@ CT_DoArchTupleValues() {
         little) CT_ARCH_ENDIAN_CFLAG="-EL";;
     esac
 
+
+    if [ "${CT_ARCH_FLOAT}" = "soft" ]; then
+        CT_TARGET_SYS="${CT_TARGET_SYS}sf"
+    fi
+
     # Override ABI flags
     CT_ARCH_ABI_CFLAG="-mabi=${CT_ARCH_mips_ABI}"
     CT_ARCH_WITH_ABI="--with-abi=${CT_ARCH_mips_ABI}"
