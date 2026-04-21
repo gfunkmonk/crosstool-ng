@@ -53,24 +53,7 @@ uClibc_ng_backend_once()
     # Simply copy files until uClibc has the ability to build out-of-tree
     CT_DoLog EXTRA "Copying sources to build dir"
     CT_DoExecLog ALL cp -av "${CT_SRC_DIR}/uClibc-ng/." .
-    CT_DoLog EXTRA "Stripping @local and fixing 64-bit syscalls"
-    CT_DoExecLog ALL find ldso/ldso/powerpc/ \( -name "*.S" -o -name "*.h" \) -exec sed -i 's/@local//g' {} +
-    CT_DoExecLog ALL sed -i 's/sizeof (__arg\([1-6]\)) > 4/sizeof (__arg\1) > sizeof(long)/g' libc/sysdeps/linux/powerpc/bits/syscalls.h
-    CT_DoExecLog ALL sed -i '/config ARCH_any_powerpc/a \	select ARCH_HAS_NO_LDSO' extra/Configs/Config.powerpc
-    CT_DoLog EXTRA "Nuking @local from all PowerPC assembly and headers"
-    # Find every file containing @local in the current build tree and kill it
-    CT_DoExecLog ALL find . -type f \( -name "*.S" -o -name "*.h" -o -name "*.c" \) -exec sed -i 's/@local//g' {} +
     
-    CT_DoLog EXTRA "Fixing 64-bit syscall argument sizing"
-    CT_DoExecLog ALL find . -name "syscalls.h" -exec sed -i 's/sizeof (__arg\([1-6]\)) > 4/sizeof (__arg\1) > sizeof(long)/g' {} +
-
-    if [ "${CT_ARCH}" = "alpha" ]; then
-            CT_DoLog EXTRA "Forcing Alpha to use legacy _init/_fini"
-            find . -name "dl-elf.h" -exec sed -i 's/defined(\?UCLIBC_HAS_INITFINI_ARRAY)\?/0/g' {} +
-            find . -name "__uClibc_main.c" -exec sed -i 's/defined(\?UCLIBC_HAS_INITFINI_ARRAY)\?/0/g' {} +
-            find . -name "__uClibc_main.c" -exec sed -i '/const size_t size = __preinit_array_end/s/^/\/\//' {} +
-    fi
-
     # If building for PowerPC 64-bit, we prevent LDSO selection at the Kconfig level
     if [[ "${CT_ARCH}" == *"powerpc"* && "${CT_ARCH_64}" == "y" ]]; then
         CT_DoLog EXTRA "Nuking LDSO support in Kconfig for PowerPC64"
@@ -80,11 +63,27 @@ uClibc_ng_backend_once()
         
         # If .config exists, we nuke it there too just in case, but ignore errors
         [ -f .config ] && sed -i 's/.*HAS_SHARED_LIBS.*/# HAS_SHARED_LIBS is not set/' .config || true
-    fi
 
-    # The recursive find for @local is still your best friend
-    CT_DoLog EXTRA "Nuking @local from all PowerPC sources"
-    find . -type f \( -name "*.S" -o -name "*.h" -o -name "*.c" \) -exec sed -i 's/@local//g' {} +
+        CT_DoLog EXTRA "Stripping @local and fixing 64-bit syscalls"
+        CT_DoExecLog ALL find ldso/ldso/powerpc/ \( -name "*.S" -o -name "*.h" \) -exec sed -i 's/@local//g' {} +
+        CT_DoExecLog ALL sed -i 's/sizeof (__arg\([1-6]\)) > 4/sizeof (__arg\1) > sizeof(long)/g' libc/sysdeps/linux/powerpc/bits/syscalls.h
+        CT_DoExecLog ALL sed -i '/config ARCH_any_powerpc/a \   select ARCH_HAS_NO_LDSO' extra/Configs/Config.powerpc
+        CT_DoLog EXTRA "Nuking @local from all PowerPC assembly and headers"
+        # Find every file containing @local in the current build tree and kill it
+        CT_DoExecLog ALL find . -type f \( -name "*.S" -o -name "*.h" -o -name "*.c" \) -exec sed -i 's/@local//g' {} +
+
+        CT_DoLog EXTRA "Fixing 64-bit syscall argument sizing"
+        CT_DoExecLog ALL find . -name "syscalls.h" -exec sed -i 's/sizeof (__arg\([1-6]\)) > 4/sizeof (__arg\1) > sizeof(long)/g' {} +
+
+        # The recursive find for @local is still your best friend
+        CT_DoLog EXTRA "Nuking @local from all PowerPC sources"
+        find . -type f \( -name "*.S" -o -name "*.h" -o -name "*.c" \) -exec sed -i 's/@local//g' {} +
+
+        # PowerPC64: Redirect GOT references to the TOC pointer
+        # This satisfies the linker for ldso when the 32-bit logic is leaked into 64-bit.
+        find . -name "dl-startup.h" -o -name "dl-elf.h" | xargs sed -i 's/_GLOBAL_OFFSET_TABLE_/_TOC_/g' 2>/dev/null
+
+    fi
 
     if [ "${CT_ARCH}" = "alpha" ]; then
         CT_DoLog EXTRA "Alpha Nuke: Commenting out preinit_array in source"
@@ -96,6 +95,12 @@ uClibc_ng_backend_once()
     
         # Also kill the definition in the headers to be sure
         find . -name "dl-elf.h" -exec sed -i 's/UCLIBC_HAS_INITFINI_ARRAY/DISABLED_FOR_ALPHA/g' {} +
+
+        CT_DoLog EXTRA "Forcing Alpha to use legacy _init/_fini"
+        find . -name "dl-elf.h" -exec sed -i 's/defined(\?UCLIBC_HAS_INITFINI_ARRAY)\?/0/g' {} +
+        find . -name "__uClibc_main.c" -exec sed -i 's/defined(\?UCLIBC_HAS_INITFINI_ARRAY)\?/0/g' {} +
+        find . -name "__uClibc_main.c" -exec sed -i '/const size_t size = __preinit_array_end/s/^/\/\//' {} +
+
     fi
 
     if [ "${CT_ARCH}" = "sparc" ] && [ "${CT_ARCH_64}" = "y" ]; then
