@@ -68,6 +68,7 @@ uClibc_ng_backend_once()
             CT_DoLog EXTRA "Forcing Alpha to use legacy _init/_fini"
             find . -name "dl-elf.h" -exec sed -i 's/defined(\?UCLIBC_HAS_INITFINI_ARRAY)\?/0/g' {} +
             find . -name "__uClibc_main.c" -exec sed -i 's/defined(\?UCLIBC_HAS_INITFINI_ARRAY)\?/0/g' {} +
+            find . -name "__uClibc_main.c" -exec sed -i '/const size_t size = __preinit_array_end/s/^/\/\//' {} +
     fi
 
     # If building for PowerPC 64-bit, we prevent LDSO selection at the Kconfig level
