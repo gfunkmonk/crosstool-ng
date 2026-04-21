@@ -83,6 +83,13 @@ uClibc_ng_backend_once()
         # This satisfies the linker for ldso when the 32-bit logic is leaked into 64-bit.
         find . -name "dl-startup.h" -o -name "dl-elf.h" | xargs sed -i 's/_GLOBAL_OFFSET_TABLE_/_TOC_/g' 2>/dev/null
 
+        CT_DoLog EXTRA "PowerPC64: Aliasing GOT/TOC symbols to .TOC."
+        # We use the __asm__ directive to create a symbol alias. 
+        # This fixes errors caused by the @local nuke in both C and Assembly.
+        # We apply it to the main ldso files where the references occur.
+        find . -name "ldso.c" -o -name "dl-startup.h" -o -name "dl-elf.h" | xargs sed -i '1i__asm__(".set _GLOBAL_OFFSET_TABLE_, .TOC.");' 2>/dev/null
+        find . -name "ldso.c" -o -name "dl-startup.h" -o -name "dl-elf.h" | xargs sed -i '1i__asm__(".set _TOC_, .TOC.");' 2>/dev/null
+
     fi
 
     if [ "${CT_ARCH}" = "alpha" ]; then
