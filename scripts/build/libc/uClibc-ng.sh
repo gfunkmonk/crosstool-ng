@@ -101,6 +101,9 @@ uClibc_ng_backend_once()
     if [ "${CT_ARCH}" = "sparc" ] && [ "${CT_ARCH_64}" = "y" ]; then
         CT_DoLog EXTRA "Fixing SPARC64 pointer casts and fcntl64 aliases"
     
+        # Sparc64: Nuke the broken 32-bit assembly files that cause relocation overflows in 64-bit mode
+        find . -name "memchr.S" -path "*/libc/string/sparc/sparc32/*" -exec mv {} {}.broken \;
+
         # Fix the 'cast from pointer to integer of different size' in syscalls.h
         # We change the (int) cast to (long) to match the 64-bit register size
         find . -name "syscalls.h" -exec sed -i 's/(int) (o/(long) (o/g' {} +
@@ -108,6 +111,12 @@ uClibc_ng_backend_once()
         # Fix the fcntl64 alias error by ensuring fcntl64 isn't treated as a separate entity 
         # when it should be identical to fcntl on 64-bit
         find . -name "__syscall_fcntl.c" -exec sed -i 's/lt_libc_hidden(fcntl64)/#ifndef __arch64__\nlt_libc_hidden(fcntl64)\n#endif/' {} +
+    fi
+
+    if [ "${CT_ARCH}" = "s390" ]; then
+        # This is a brute-force fix for the AArch64 code leaking into S390
+        find . -name "dl-bti.h" -exec sed -i 's/hint #34/\/* hint #34 *\//g' {} +
+
     fi
 
     # Force the date of the pregen locale data, as the
