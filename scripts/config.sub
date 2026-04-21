@@ -545,10 +545,6 @@ case $1 in
 				basic_machine=hppa-unknown
 				basic_os=linux
 				;;
-			parisc64)
-				basic_machine=hppa64-unknown
-				basic_os=linux
-				;;
 			psp)
 				basic_machine=mipsallegrexel-sony
 				basic_os=psp

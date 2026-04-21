@@ -2,14 +2,8 @@
 
 CT_DoArchTupleValues()
 {
-   # The architecture part of the tuple:
-   # For 64-bit parisc, use hppa64 so config.sub produces hppa64-*-*-*
-   # rather than canonicalising parisc -> hppa (32-bit only).
-   if [ "${CT_ARCH_BITNESS}" = "64" ]; then
-       CT_TARGET_ARCH="hppa64"
-   else
-       CT_TARGET_ARCH="${CT_ARCH}"
-   fi
+    # The architecture part of the tuple:
+    CT_TARGET_ARCH="${CT_ARCH}"
 }
 
 CT_DoArchUClibcConfig()
