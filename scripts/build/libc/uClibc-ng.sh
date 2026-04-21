@@ -70,14 +70,14 @@ uClibc_ng_backend_once()
         CT_DoExecLog ALL sed -i '/config ARCH_any_powerpc/a \   select ARCH_HAS_NO_LDSO' extra/Configs/Config.powerpc
         CT_DoLog EXTRA "Nuking @local from all PowerPC assembly and headers"
         # Find every file containing @local in the current build tree and kill it
-        CT_DoExecLog ALL find . -type f \( -name "*.S" -o -name "*.h" -o -name "*.c" \) -exec sed -i 's/@local//g' {} +
+        CT_DoExecLog ALL find . -type f -name "*.S" -exec sed -i 's/@local//g' {} +
 
         CT_DoLog EXTRA "Fixing 64-bit syscall argument sizing"
         CT_DoExecLog ALL find . -name "syscalls.h" -exec sed -i 's/sizeof (__arg\([1-6]\)) > 4/sizeof (__arg\1) > sizeof(long)/g' {} +
 
         # The recursive find for @local is still your best friend
         CT_DoLog EXTRA "Nuking @local from all PowerPC sources"
-        find . -type f \( -name "*.S" -o -name "*.h" -o -name "*.c" \) -exec sed -i 's/@local//g' {} +
+        find . -type f -name "*.S" -exec sed -i 's/@local//g' {} +
 
         # PowerPC64: Redirect GOT references to the TOC pointer
         # This satisfies the linker for ldso when the 32-bit logic is leaked into 64-bit.
