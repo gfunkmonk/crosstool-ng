@@ -112,6 +112,11 @@ uClibc_ng_backend_once()
         # Fix the fcntl64 alias error by ensuring fcntl64 isn't treated as a separate entity 
         # when it should be identical to fcntl on 64-bit
         find . -name "__syscall_fcntl.c" -exec sed -i 's/lt_libc_hidden(fcntl64)/#ifndef __arch64__\nlt_libc_hidden(fcntl64)\n#endif/' {} +
+
+        # Sparc64: Fix conflicting types for strtoq and strtouq (long vs long long)
+        # This changes the header declarations to match the 64-bit long aliases used in stdlib.c
+        find . -name "stdlib.h" -exec sed -i 's/quad_t strtoq/long strtoq/' {} +
+        find . -name "stdlib.h" -exec sed -i 's/u_quad_t strtouq/unsigned long strtouq/' {} +
     fi
 
     if [ "${CT_ARCH}" = "s390" ]; then
