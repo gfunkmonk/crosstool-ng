@@ -103,6 +103,7 @@ uClibc_ng_backend_once()
     
         # Sparc64: Nuke the broken 32-bit assembly files that cause relocation overflows in 64-bit mode
         find . -name "memchr.S" -path "*/libc/string/sparc/*" -exec mv {} {}.broken \;
+        find . -path "*/libc/string/sparc/*.S" -exec mv {} {}.broken \;
 
         # Fix the 'cast from pointer to integer of different size' in syscalls.h
         # We change the (int) cast to (long) to match the 64-bit register size
