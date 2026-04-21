@@ -96,17 +96,17 @@ uClibc_ng_backend_once()
         CT_DoLog EXTRA "Alpha Nuke: Commenting out preinit_array in source"
         # Find the C file and comment out the lines that use those symbols
         # This targets the specific variable declarations and the loop in __uClibc_main.c
-        find . -name "__uClibc_main.c" -exec sed -i '/extern.*__preinit_array_start/s/^/\/\//' {} +
-        find . -name "__uClibc_main.c" -exec sed -i '/extern.*__preinit_array_end/s/^/\/\//' {} +
-        find . -name "__uClibc_main.c" -exec sed -i '/for.*__preinit_array_start/,/}/s/^/\/\//' {} +
+        #find . -name "__uClibc_main.c" -exec sed -i '/extern.*__preinit_array_start/s/^/\/\//' {} +
+        #find . -name "__uClibc_main.c" -exec sed -i '/extern.*__preinit_array_end/s/^/\/\//' {} +
+        #find . -name "__uClibc_main.c" -exec sed -i '/for.*__preinit_array_start/,/}/s/^/\/\//' {} +
     
         # Also kill the definition in the headers to be sure
-        find . -name "dl-elf.h" -exec sed -i 's/UCLIBC_HAS_INITFINI_ARRAY/DISABLED_FOR_ALPHA/g' {} +
+        #find . -name "dl-elf.h" -exec sed -i 's/UCLIBC_HAS_INITFINI_ARRAY/DISABLED_FOR_ALPHA/g' {} +
 
         CT_DoLog EXTRA "Forcing Alpha to use legacy _init/_fini"
-        find . -name "dl-elf.h" -exec sed -i 's/defined(\?UCLIBC_HAS_INITFINI_ARRAY)\?/0/g' {} +
-        find . -name "__uClibc_main.c" -exec sed -i 's/defined(\?UCLIBC_HAS_INITFINI_ARRAY)\?/0/g' {} +
-        find . -name "__uClibc_main.c" -exec sed -i '/const size_t size = __preinit_array_end/s/^/\/\//' {} +
+        #find . -name "dl-elf.h" -exec sed -i 's/defined(\?UCLIBC_HAS_INITFINI_ARRAY)\?/0/g' {} +
+        #find . -name "__uClibc_main.c" -exec sed -i 's/defined(\?UCLIBC_HAS_INITFINI_ARRAY)\?/0/g' {} +
+        #find . -name "__uClibc_main.c" -exec sed -i '/const size_t size = __preinit_array_end/s/^/\/\//' {} +
 
     fi
 
