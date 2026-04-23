@@ -1,0 +1,23 @@
+--- meson.build	2025-04-16 13:35:23.000000000 -0400
++++ meson.build.patched	2026-04-23 14:11:36.196778273 -0400
+@@ -77,8 +77,20 @@
+ # for some common aliases
+ 
+ cpu_family_aliases = {
++		       # arm
++		       'armv6m'   : 'arm',
++		       'armv7m'   : 'arm',
++		       'armv7em'  : 'arm',
++		       'armv8m'   : 'arm',
++		       'armv8.1m' : 'arm',
++		       'armv8'    : 'arm',
++		       'armv7'    : 'arm',
++		       'armv6'    : 'arm',
++		       'armv5'    : 'arm',
++
+ 		       # aarch64
+ 		       'arm64' : 'aarch64',
++
+ 		       # cris
+ 		       'crisv32' : 'cris',
+            # loongarch
