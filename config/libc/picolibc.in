@@ -129,7 +129,7 @@ config LIBC_PICOLIBC_LTO
 config LIBC_PICOLIBC_NANO_MALLOC
     bool
     prompt "Enable Nano Malloc [unused]"
-    default y
+    default n
     help
       PICOLIBC has two implementations of malloc family's functions, one in
       `mallocr.c' and the other one in `nano-mallocr.c'.  This options
