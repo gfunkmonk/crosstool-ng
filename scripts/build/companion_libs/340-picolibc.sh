@@ -25,9 +25,6 @@ do_picolibc_common_install() {
     fi
 
     yn_args="IO_C99FMT:io-c99-formats
-IO_LL:io-long-long
-NANO_MALLOC:newlib-nano-malloc
-    "
 
     for ynarg in $yn_args; do
         var="CT_LIBC_PICOLIBC_${ynarg%:*}"

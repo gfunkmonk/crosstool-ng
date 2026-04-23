@@ -15,7 +15,7 @@ picolibc_extract()
 picolibc_headers()
 {
     CT_DoStep INFO "Installing C library headers"
-    CT_DoExecLog ALL cp -a "${CT_SRC_DIR}/picolibc/newlib/libc/include/." "${CT_HEADERS_DIR}"
+    CT_DoExecLog ALL cp -a "${CT_SRC_DIR}/picolibc/libc/include/." "${CT_HEADERS_DIR}"
     CT_EndStep
 }
 
