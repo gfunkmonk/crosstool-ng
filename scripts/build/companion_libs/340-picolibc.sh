@@ -156,7 +156,7 @@ do_cc_libstdcxx_picolibc()
     local final_backend
 
     # Initialize as a string, not an array
-    final_opts="host=${CT_HOST}"
+final_opts="host=${CT_HOST}"
     final_opts="${final_opts} libstdcxx_name=picolibc"
     final_opts="${final_opts} prefix=${CT_PREFIX_DIR}"
     final_opts="${final_opts} complibs=${CT_HOST_COMPLIBS_DIR}"
@@ -164,11 +164,11 @@ do_cc_libstdcxx_picolibc()
     final_opts="${final_opts} ldflags=${CT_LDFLAGS_FOR_HOST}"
     final_opts="${final_opts} lang_list=c,c++"
     final_opts="${final_opts} build_step=libstdcxx"
-    final_opts="${final_opts} extra_config+='--enable-stdio=stdio_pure'"
-    final_opts="${final_opts} extra_config+='--with-headers=${CT_PREFIX_DIR}/picolibc/include'"
+    final_opts="${final_opts} extra_config+=--enable-stdio=stdio_pure"
+    final_opts="${final_opts} extra_config+=--with-headers=${CT_PREFIX_DIR}/picolibc/include"
 
     if [ "${CT_PICOLIBC_older_than_1_8}" = "y" ]; then
-          final_opts="${final_opts} extra_config+='--disable-wchar_t'"
+          final_opts="${final_opts} extra_config+=--disable-wchar_t"
     fi
     if [ "${CT_LIBC_PICOLIBC_ENABLE_TARGET_OPTSPACE}" = "y" ]; then
         final_opts="${final_opts} enable_optspace=yes"
@@ -193,7 +193,7 @@ do_cc_libstdcxx_picolibc()
     CT_DoStep INFO "Installing libstdc++ picolibc"
     CT_mkdir_pushd "${CT_BUILD_DIR}/build-cc-libstdcxx-picolibc"
     
-    # Use unquoted expansion so the string is split into arguments
+    # The moment of truth
     "${final_backend}" ${final_opts}
     
     CT_Popd
