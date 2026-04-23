@@ -10,6 +10,10 @@ CT_DoArchTupleValues() {
         little) CT_ARCH_ENDIAN_CFLAG="-EL";;
     esac
 
+    if [ "${CT_ARCH_FLOAT}" = "soft" ]; then
+        CT_TARGET_SYS="${CT_TARGET_SYS}sf"
+    fi
+
     # Override ABI flags
     CT_ARCH_ABI_CFLAG="-mabi=${CT_ARCH_mips_ABI}"
     CT_ARCH_WITH_ABI="--with-abi=${CT_ARCH_mips_ABI}"
@@ -97,5 +101,15 @@ CT_DoArchMUSLPostInstall() {
     #   https://www.sourceware.org/ml/libc-alpha/2004-11/msg00034.html
     if [ ! -r "${CT_HEADERS_DIR}/sgidefs.h" ]; then
         echo "#include <asm/sgidefs.h> // Redirected by ct-ng" > "${CT_HEADERS_DIR}/sgidefs.h"
+    fi
+
+    if [ "${CT_ARCH_64}" = "y" ]; then
+        # Workaround to fix libdir path
+        if [ ! -e "${CT_SYSROOT_DIR}/lib64" ]; then
+            ln -sf lib ${CT_SYSROOT_DIR}/lib64
+        fi
+        if [ ! -e "${CT_SYSROOT_DIR}/usr/lib64" ]; then
+            ln -sf lib ${CT_SYSROOT_DIR}/usr/lib64
+        fi
     fi
 }
