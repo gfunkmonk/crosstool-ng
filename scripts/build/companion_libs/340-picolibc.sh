@@ -152,11 +152,13 @@ if [ "${CT_LIBC_PICOLIBC_GCC_LIBSTDCXX}" = "y" ]; then
 # flag for libstdc++ "picolibc" variant.
 do_cc_libstdcxx_picolibc()
 {
+    local variant="$1"
     local -a final_opts
     local final_backend
+    local suffix=
 
     # Initialize as a string, not an array
-final_opts="host=${CT_HOST}"
+    final_opts="host=${CT_HOST}"
     final_opts="${final_opts} libstdcxx_name=picolibc"
     final_opts="${final_opts} prefix=${CT_PREFIX_DIR}"
     final_opts="${final_opts} complibs=${CT_HOST_COMPLIBS_DIR}"
@@ -177,6 +179,11 @@ final_opts="host=${CT_HOST}"
         final_opts="${final_opts} extra_cxxflags_for_target=${CT_LIBC_PICOLIBC_GCC_LIBSTDCXX_TARGET_CXXFLAGS}"
     fi
 
+    if [ "${variant}" = "noexcept" ]; then
+        final_opts+=( "extra_cxxflags_for_target=-fno-exceptions" )
+        suffix="-noexcept"
+    fi
+
     if [ "${CT_BARE_METAL}" = "y" ]; then
         final_opts="${final_opts} mode=baremetal"
         final_opts="${final_opts} build_libgcc=yes"
@@ -191,8 +198,14 @@ final_opts="host=${CT_HOST}"
     fi
 
     CT_DoStep INFO "Installing libstdc++ picolibc"
-    CT_mkdir_pushd "${CT_BUILD_DIR}/build-cc-libstdcxx-picolibc"
+    CT_mkdir_pushd "${CT_BUILD_DIR}/build-cc-libstdcxx-picolibc${suffix}"
     
+    if [ "${CT_LIBC_PICOLIBC_GCC_LIBSTDCXX_NOEXCEPT}" = "y" ]; then
+      do_cc_libstdcxx_picolibc noexcept
+      picolibc_add_suffix_to_lib "${CT_PREFIX_DIR}/picolibc/${CT_TARGET}/lib" "libstdc++.a" "noexcept"
+      picolibc_add_suffix_to_lib "${CT_PREFIX_DIR}/picolibc/${CT_TARGET}/lib" "libsupc++.a" "noexcept"
+    fi
+
     # The moment of truth
     "${final_backend}" ${final_opts}
     
@@ -200,6 +213,19 @@ final_opts="host=${CT_HOST}"
     CT_EndStep
 }
 fi # CT_LIBC_PICOLIBC_GCC_LIBSTDCXX
+
+picolibc_add_suffix_to_lib() {
+    local lib_dir="${1}"
+    local lib_name="${2}"
+    local suffix="${3}"
+    local filename extension
+
+    find "${lib_dir}" -name "${lib_name}" | while read target_lib; do
+      filename=${target_lib%.*}
+      extension=${target_lib##*.}
+      CT_DoExecLog ALL mv "${target_lib}" "${filename}_${suffix}.${extension}"
+    done
+}
 
 do_picolibc_for_target() {
     CT_DoStep INFO "Installing Picolibc library"
