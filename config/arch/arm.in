@@ -80,7 +80,7 @@ config ARCH_ARM_EABI_FORCE
 config ARCH_ARM_EABI
     bool
     prompt "Use EABI"
-    default y && if ! W64_MINGW32
+    default y if ! W64_MINGW32
     help
       Set up the toolchain so that it generates EABI-compliant binaries.
       
