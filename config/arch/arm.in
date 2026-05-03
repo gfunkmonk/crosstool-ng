@@ -71,16 +71,16 @@ config ARCH_ARM_ABI_OK
     depends on ! ARCH_ARM_EABI
     select ARCH_SUPPORTS_WITH_ABI
 
-# Little trick to force EABI *and* always show the prompt
 config ARCH_ARM_EABI_FORCE
     bool
-    default y if ! OBSOLETE
+    # Only force EABI if we AREN'T building for MinGW
+    default y if ! OBSOLETE && ! W64_MINGW32
     select ARCH_ARM_EABI
 
 config ARCH_ARM_EABI
     bool
     prompt "Use EABI"
-    default y
+    default y && if ! W64_MINGW32
     help
       Set up the toolchain so that it generates EABI-compliant binaries.
       
@@ -92,7 +92,7 @@ config ARCH_ARM_TUPLE_USE_EABIHF
     prompt "append 'hf' to the tuple (EXPERIMENTAL)"
     depends on ARCH_FLOAT_HW
     depends on ARCH_ARM_EABI    # Until we only support that...
-    default y
+    default y if ! W64_MINGW32
     help
       Is you say 'y' here, then the tuple for the toolchain will end
       up with *eabihf, instead of the usual *eabi.
