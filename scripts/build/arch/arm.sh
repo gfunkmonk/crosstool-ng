@@ -35,7 +35,7 @@ CT_DoArchTupleValues() {
         CT_ARCH_TARGET_CFLAGS+=" -mthumb-interwork"
     fi
 
-    if [ "${CT_ARCH_ARM_TUPLE_USE_EABIHF}" = "y" ]; then
+    if [ "${CT_ARCH_ARM_TUPLE_USE_EABIHF}" = "y" -a "${CT_TARGET_SYS}" != "mingw32" ]; then
         CT_TARGET_SYS="${CT_TARGET_SYS}hf"
     fi
 
