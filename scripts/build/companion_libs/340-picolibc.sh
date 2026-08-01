@@ -78,6 +78,8 @@ do_picolibc_common_install() {
         local -l target_arch="${CT_TARGET_ARCH}"
         if [ "${CT_ARCH}" = "sh" ]; then
             target_arch="sh"
+        elif [ "${CT_ARCH}" = "arm" ]; then
+            target_arch="arm"
         fi
         cat << EOF > picolibc-cross.txt
 [binaries]
