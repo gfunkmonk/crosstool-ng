@@ -1,4 +1,4 @@
-From bb4b07668bb852f755e40e979c2325dbfba91e77 Mon Sep 17 00:00:00 2001
+From 4e0106631e80bb1e10efb89237a060308c27bb22 Mon Sep 17 00:00:00 2001
 From: Rosen Penev <rosenp@gmail.com>
 Date: Sat, 13 Feb 2021 17:08:21 +0300
 Subject: [PATCH] Add ARC700 support
@@ -17,7 +17,7 @@ Signed-off-by: Alexey Brodkin <abrodkin@synopsys.com>
  3 files changed, 19 insertions(+)
 
 diff --git a/sysdeps/unix/sysv/linux/arc/syscall.S b/sysdeps/unix/sysv/linux/arc/syscall.S
-index 335b9692..14f3adc9 100644
+index 335b969257..14f3adc961 100644
 --- a/sysdeps/unix/sysv/linux/arc/syscall.S
 +++ b/sysdeps/unix/sysv/linux/arc/syscall.S
 @@ -24,8 +24,13 @@ ENTRY (syscall)
@@ -35,7 +35,7 @@ index 335b9692..14f3adc9 100644
  	ARC_TRAP_INSN
  	brhi	r0, -4096, L (call_syscall_err)
 diff --git a/sysdeps/unix/sysv/linux/arc/syscall_cancel.S b/sysdeps/unix/sysv/linux/arc/syscall_cancel.S
-index 842132a4..a7d61e67 100644
+index 842132a446..a7d61e670f 100644
 --- a/sysdeps/unix/sysv/linux/arc/syscall_cancel.S
 +++ b/sysdeps/unix/sysv/linux/arc/syscall_cancel.S
 @@ -38,9 +38,15 @@ __syscall_cancel_arch_start:
@@ -55,7 +55,7 @@ index 842132a4..a7d61e67 100644
  
  	.globl __syscall_cancel_arch_end
 diff --git a/sysdeps/unix/sysv/linux/arc/sysdep.h b/sysdeps/unix/sysv/linux/arc/sysdep.h
-index 90cea3f8..e9167f06 100644
+index 90cea3f840..e9167f06fb 100644
 --- a/sysdeps/unix/sysv/linux/arc/sysdep.h
 +++ b/sysdeps/unix/sysv/linux/arc/sysdep.h
 @@ -130,7 +130,11 @@ L (call_syscall_err):			ASM_LINE_SEP	\
@@ -82,5 +82,3 @@ index 90cea3f8..e9167f06 100644
  
  # define HAVE_CLONE3_WRAPPER	1
  
--- 
-2.52.0
