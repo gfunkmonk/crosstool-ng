@@ -1,0 +1,26 @@
+From 029f9c72c8c18a87efe5419347ff4075189c08db Mon Sep 17 00:00:00 2001
+From: BtbN <btbn@btbn.de>
+Date: Fri, 8 May 2026 01:42:59 +0200
+Subject: [PATCH] Fix pthread library linking on aarch64-mingw builds
+
+---
+ gcc/config.gcc | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/gcc/config.gcc b/gcc/config.gcc
+index 8fe99616f82..a9d2da5994c 100644
+--- a/gcc/config.gcc
++++ b/gcc/config.gcc
+@@ -1325,6 +1325,9 @@ aarch64-*-mingw*)
+ 	tm_file="${tm_file} aarch64/aarch64-abi-ms.h"
+ 	tm_file="${tm_file} aarch64/aarch64-coff.h"
+ 	tm_file="${tm_file} aarch64/cygming.h"
++	if test x$enable_threads = xposix ; then
++		tm_file="${tm_file} i386/mingw-pthread.h"
++	fi
+ 	tm_file="${tm_file} mingw/mingw32.h"
+ 	tm_file="${tm_file} mingw/mingw-stdint.h"
+ 	tm_file="${tm_file} mingw/winnt.h"
+-- 
+2.52.0
+
