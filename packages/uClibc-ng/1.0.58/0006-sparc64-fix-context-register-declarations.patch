@@ -1,0 +1,24 @@
+--- a/libc/sysdeps/linux/sparc/getcontext.S     2026-03-01 00:49:31.000000000 -0500
++++ b/libc/sysdeps/linux/sparc/getcontext.S     2026-04-18 13:51:15.286065793 -0400
+@@ -21,6 +21,9 @@
+
+ #include "ucontext_i.h"
+
++.register %g2, #scratch
++.register %g3, #scratch
++
+ /*  int __getcontext (ucontext_t *ucp)
+
+   Saves the machine context in UCP such that when it is activated,
+--- a/libc/sysdeps/linux/sparc/setcontext.S     2026-03-01 00:49:31.000000000 -0500
++++ b/libc/sysdeps/linux/sparc/setcontext.S     2026-04-18 13:52:44.086065939 -0400
+@@ -21,6 +21,9 @@
+
+ #include "ucontext_i.h"
+
++.register %g2, #scratch
++.register %g3, #scratch
++
+ #define ST_FLUSH_WINDOWS 3
+
+ /*  int __setcontext (const ucontext_t *ucp)

@@ -1,0 +1,46 @@
+--- a/libc/sysdeps/linux/powerpc/clone.S
++++ b/libc/sysdeps/linux/powerpc/clone.S
+@@ -45,10 +45,21 @@
+ 	stwu	r1,-32(r1)
+ 	cfi_adjust_cfa_offset (32)
+ #ifndef __ASSUME_FIXED_CLONE_SYSCALL
++#ifdef __LITTLE_ENDIAN__
++	stw	r29,16(r1)
++	stw	r30,20(r1)
++	stw	r31,24(r1)
++#else
+ 	stmw	r29,16(r1)
++#endif
++#else
++#ifdef __LITTLE_ENDIAN__
++	stw	r30,16(r1)
++	stw	r31,20(r1)
+ #else
+ 	stmw	r30,16(r1)
+ #endif
++#endif
+ 
+ 	/* Set up stack frame for child.  */
+ 	clrrwi	r4,r4,4
+@@ -101,10 +112,21 @@
+ .Lparent:
+ 	/* Parent.  Restore registers & return.  */
+ #ifndef __ASSUME_FIXED_CLONE_SYSCALL
++#ifdef __LITTLE_ENDIAN__
++	lwz	r29,16(r1)
++	lwz	r30,20(r1)
++	lwz	r31,24(r1)
++#else
+ 	lmw	r29,16(r1)
++#endif
++#else
++#ifdef __LITTLE_ENDIAN__
++	lwz	r30,16(r1)
++	lwz	r31,20(r1)
+ #else
+ 	lmw	r30,16(r1)
+ #endif
++#endif
+ 	addi	r1,r1,32
+ 	bnslr+
+ 	b	__syscall_error

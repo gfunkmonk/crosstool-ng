@@ -1,0 +1,11 @@
+--- a/extra/Configs/Config.powerpc
++++ b/extra/Configs/Config.powerpc
+@@ -10,7 +10,7 @@
+ config FORCE_OPTIONS_FOR_ARCH
+ 	bool
+ 	default y
+-	select ARCH_BIG_ENDIAN
++	select ARCH_ANY_ENDIAN
+ 	select ARCH_HAS_MMU
+ 	select ARCH_HAS_DEPRECATED_SYSCALLS
+ 

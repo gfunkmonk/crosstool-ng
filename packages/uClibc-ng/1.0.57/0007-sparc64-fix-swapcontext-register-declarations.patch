@@ -1,0 +1,12 @@
+--- a/libc/sysdeps/linux/sparc/swapcontext.S
++++ b/libc/sysdeps/linux/sparc/swapcontext.S
+@@ -21,6 +21,9 @@
+ 
+ #include "ucontext_i.h"
+ 
++.register %g2, #scratch
++.register %g3, #scratch
++
+ #define ST_FLUSH_WINDOWS 3
+ 
+ /* int __swapcontext (ucontext_t *oucp, const ucontext_t *ucp);

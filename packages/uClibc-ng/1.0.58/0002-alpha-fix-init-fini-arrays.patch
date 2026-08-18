@@ -1,0 +1,33 @@
+--- a/libc/sysdeps/linux/alpha/crti.S
++++ b/libc/sysdeps/linux/alpha/crti.S
+@@ -41,3 +41,13 @@
+ 	.end _fini
+ 	
+ 	.ident	"GCC: (GNU) 3.3.2"
++
++.section .init_array,"aw"
++.globl __init_array_start
++.hidden __init_array_start
++__init_array_start:
++
++.section .fini_array,"aw"
++.globl __fini_array_start
++.hidden __fini_array_start
++__fini_array_start:
+--- a/libc/sysdeps/linux/alpha/crtn.S
++++ b/libc/sysdeps/linux/alpha/crtn.S
+@@ -11,3 +11,13 @@
+ 	ldq $26,0($30)
+ 	lda $30,16($30)
+ 	ret $31,($26),1
++
++.section .init_array,"aw"
++.globl __init_array_end
++.hidden __init_array_end
++__init_array_end:
++
++.section .fini_array,"aw"
++.globl __fini_array_end
++.hidden __fini_array_end
++__fini_array_end:
+
