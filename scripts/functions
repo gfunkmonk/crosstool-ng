@@ -1841,7 +1841,8 @@ CT_Mirrors()
         base="${version%%-*}"
         yymm="${version##*-??}"
         yymm="${yymm%%-*}"
-        echo "https://developer.arm.com/-/cdn-downloads/permalink/legacy-linaro-gnu-toolchains/${version}"
+        #echo "https://developer.arm.com/-/cdn-downloads/permalink/legacy-linaro-gnu-toolchains/${version}"
+        echo "https://download.industrysoftware.automation.siemens.com/open-source/"
         ;;
     kernel.org)
         case "${project}" in
