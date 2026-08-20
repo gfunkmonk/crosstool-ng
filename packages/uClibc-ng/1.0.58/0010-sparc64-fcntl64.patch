@@ -1,11 +1,5 @@
---- a/libc/sysdeps/linux/common/__syscall_fcntl.c   2026-08-20 09:55:59.131955250 -0400
-+++ a/libc/sysdeps/linux/common/__syscall_fcntl.c   2026-08-20 09:57:29.634632610 -0400
-@@ -1,4 +1,4 @@
--/*
-+       /*
-  * __syscall_fcntl() for uClibc
-  *
-  * Copyright (C) 2006 Steven J. Hill <sjhill@realitydiluted.com>
+--- a/libc/sysdeps/linux/common/__syscall_fcntl.c      2026-05-24 13:05:22.000000000 -0400
++++ b/libc/sysdeps/linux/common/__syscall_fcntl.c      2026-08-20 10:37:50.904057330 -0400
 @@ -68,5 +68,7 @@
  #if !defined __NR_fcntl64 && __WORDSIZE == 32
  strong_alias_untyped(fcntl,fcntl64)
