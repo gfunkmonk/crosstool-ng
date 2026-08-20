@@ -1,5 +1,5 @@
---- a\libc\sysdeps\linux\common\__syscall_fcntl.c   2026-08-20 09:55:59.131955250 -0400
-+++ b\libc\sysdeps\linux\common\__syscall_fcntl.c   2026-08-20 09:57:29.634632610 -0400
+--- a/libc/sysdeps/linux/common/__syscall_fcntl.c   2026-08-20 09:55:59.131955250 -0400
++++ a/libc/sysdeps/linux/common/__syscall_fcntl.c   2026-08-20 09:57:29.634632610 -0400
 @@ -1,4 +1,4 @@
 -/*
 +       /*
