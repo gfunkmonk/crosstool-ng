@@ -1,0 +1,26 @@
+--- a/ldso/include/dl-syscall.h
++++ b/ldso/include/dl-syscall.h
+@@ -263,11 +263,15 @@
+ #ifdef __UCLIBC_HAS_SSP__
+ # include <sys/time.h>
+-# define __NR__dl_gettimeofday __NR_gettimeofday
+-static __always_inline _syscall2(int, _dl_gettimeofday, struct timeval *, tv,
+-# ifdef __USE_BSD
+-                        struct timezone *
+-# else
+-                        void *
+-# endif
+-						, tz)
++# ifdef __NR_gettimeofday
++#  define __NR__dl_gettimeofday __NR_gettimeofday
++static __always_inline _syscall2(int, _dl_gettimeofday, struct timeval *, tv,
++#  ifdef __USE_BSD
++                        struct timezone *
++#  else
++                        void *
++#  endif
++						, tz)
++# else
++static __always_inline int _dl_gettimeofday(struct timeval *tv, void *tz) { return -1; }
++# endif
+ #endif
