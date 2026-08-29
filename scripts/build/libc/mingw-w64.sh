@@ -138,7 +138,7 @@ do_mingw_pthreads()
             dlltoolflags="-m arm64"
             ;;
         armv7-*)
-            rcflags="-F pe-armv7-little"
+            rcflags="-F pe-arm"
             dlltoolflags="-m arm"
             ;;
         *)
